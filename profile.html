@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <script src="lang.js"></script>
+
+    <style>
+        /* ================================ */
+        /*  BASE STYLES                     */
+        /* ================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Roboto", sans-serif;
+        }
+
+        /* ================================ */
+        /*  CUSTOM TOASTS                   */
+        /* ================================ */
+        .custom-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 500;
+            z-index: 9999;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.4s ease;
+            backdrop-filter: blur(10px);
+            font-size: 15px;
+        }
+
+        .custom-toast.success {
+            background: rgba(34, 197, 94, 0.9);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .custom-toast.error {
+            background: rgba(239, 68, 68, 0.9);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .custom-toast.warning {
+            background: rgba(234, 179, 8, 0.9);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .custom-toast.info {
+            background: rgba(59, 130, 246, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .custom-toast.fade-out {
+            animation: slideOutRight 0.3s ease forwards;
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* ================================ */
+        /*  BACKGROUND (3 layers)          */
+        /* ================================ */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #1a0b2e, #2d1b69, #0f3460, #1a0b2e);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .bg-gradient.show {
+            opacity: 1;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('123.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        .bg-image.hide {
+            transform: translateX(100%) scale(0.8);
+            opacity: 0;
+        }
+
+        .bg-color {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: background 0.8s ease, opacity 0.8s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .bg-color.show {
+            opacity: 1;
+        }
+
+        /* ================================ */
+        /*  PARTICLES                      */
+        /* ================================ */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ================================ */
+        /*  THEMES                         */
+        /* ================================ */
+        body.light-theme .wrapper {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            color: #1a1a2e;
+        }
+
+        body.light-theme .wrapper h1,
+        body.light-theme .wrapper .title-wrapper h1 {
+            color: #1a1a2e;
+        }
+
+        body.light-theme .profile-info .label {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-theme .wrapper .btn {
+            background: #4f46e5;
+            color: #fff;
+        }
+
+        body.light-theme .wrapper .btn:hover {
+            background: #4338ca;
+            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+        }
+
+        body.light-theme .wrapper .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        body.light-theme .wrapper .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        body.light-theme .lang-btn {
+            color: #1a1a2e;
+        }
+
+        body.light-theme .stat-card {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .edit-input {
+            background: rgba(255, 255, 255, 0.7) !important;
+            color: #1a1a2e !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .edit-input:focus {
+            border-color: #4f46e5 !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        body.color-theme .wrapper {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        body.color-theme .profile-avatar .avatar {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        }
+
+        body.color-theme .wrapper .btn {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: #fff;
+        }
+
+        body.color-theme .wrapper .btn:hover {
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        body.color-theme .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark-theme .wrapper {
+            background: rgba(0, 0, 0, 0.75);
+            border-color: rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        body.dark-theme .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ================================ */
+        /*  SMOOTH TRANSITIONS             */
+        /* ================================ */
+        body,
+        body *,
+        .wrapper,
+        .wrapper *,
+        .bg-image,
+        .bg-color,
+        .bg-gradient,
+        .settings-panel,
+        .btn,
+        .stat-card,
+        .profile-avatar .avatar,
+        .edit-input {
+            transition: background 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .bg-image,
+        .bg-color,
+        .bg-gradient {
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .wrapper {
+            transition: background 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                backdrop-filter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .settings-panel .theme-buttons button {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .profile-avatar .avatar {
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        /* ================================ */
+        /*  LANGUAGE BUTTON                */
+        /* ================================ */
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            color: #fff;
+            padding: 6px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 44px;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        body.light-theme .lang-btn {
+            color: #1a1a2e;
+        }
+
+        /* ================================ */
+        /*  MAIN BLOCK                    */
+        /* ================================ */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            background: transparent;
+            position: relative;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 440px;
+            margin: 20px auto 10px auto;
+            padding: 35px 30px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border-radius: 16px;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s ease;
+            opacity: 0;
+            transform: translateY(-60px) scale(0.97);
+            animation: wrapperSlideDown 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            z-index: 1;
+        }
+
+        @keyframes wrapperSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .wrapper>*,
+        .wrapper .profile-avatar,
+        .wrapper .profile-info,
+        .wrapper .profile-email,
+        .wrapper .btn,
+        .wrapper .stats-grid,
+        .wrapper .edit-section {
+            opacity: 0;
+        }
+
+        /* ===== TITLE ===== */
+        .title-wrapper {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            animation: contentFadeIn 0.5s ease 0.25s forwards;
+        }
+
+        .title-wrapper h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        @keyframes contentFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== AVATAR ===== */
+        .profile-avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: contentFadeIn 0.5s ease 0.35s forwards;
+        }
+
+        .profile-avatar .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            cursor: default;
+            user-select: none;
+            position: relative;
+        }
+
+        .profile-avatar .avatar .status-dot {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #22c55e;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-avatar .avatar .status-dot.offline {
+            background: #ef4444;
+        }
+
+        .profile-avatar .avatar .status-dot.pending {
+            background: #eab308;
+        }
+
+        .btn-avatar-upload {
+            margin-top: 10px;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-avatar-upload:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        body.light-theme .btn-avatar-upload {
+            color: #1a1a2e !important;
+            border-color: rgba(0, 0, 0, 0.2) !important;
+        }
+
+        body.light-theme .btn-avatar-upload:hover {
+            background: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* ===== INFO ===== */
+        .profile-info {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: contentFadeIn 0.5s ease 0.45s forwards;
+        }
+
+        .profile-info .label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .profile-info .email {
+            font-size: 20px;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .profile-info .member-since {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 6px;
+        }
+
+        .btn-resend {
+            background: rgba(234, 179, 8, 0.15) !important;
+            color: #eab308 !important;
+            border: 1px solid rgba(234, 179, 8, 0.2) !important;
+            box-shadow: none !important;
+            height: 40px !important;
+            width: 100% !important;
+            margin-top: 8px !important;
+            border-radius: 40px !important;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-resend:hover {
+            background: rgba(234, 179, 8, 0.25) !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-resend:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            animation: contentFadeIn 0.5s ease 0.5s forwards;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-card .number {
+            font-size: 22px;
+            font-weight: 700;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .stat-card .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        body.light-theme .stat-card .stat-label {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* ================================ */
+        /*  ANIMATED FAVORITES             */
+        /* ================================ */
+        .favorites-section {
+            margin: 15px 0;
+            animation: contentFadeIn 0.5s ease 0.55s forwards;
+        }
+
+        .btn-favorites-toggle {
+            width: 100%;
+            padding: 12px 20px;
+            background: rgba(234, 179, 8, 0.12);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            border-radius: 40px;
+            color: #eab308;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-favorites-toggle:hover {
+            background: rgba(234, 179, 8, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .favorites-wrapper {
+            overflow: hidden;
+            max-height: 0 !important;
+            transition: max-height 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .favorites-wrapper.open {
+            max-height: 600px !important;
+        }
+
+        .favorites-inner {
+            padding-top: 12px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease 0.15s, transform 0.5s ease 0.15s;
+        }
+
+        .favorites-wrapper.open .favorites-inner {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .btn-favorites-toggle.active {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        #favoritesList {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #favoritesList::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #favoritesList::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        #favoritesList::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        #favoritesContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .empty-favorites {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 25px 0;
+            font-size: 14px;
+        }
+
+        .fav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .fav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .fav-item .fav-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fav-item .fav-info .fav-title {
+            font-weight: 500;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .fav-item .fav-info .fav-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .fav-item .fav-remove {
+            background: rgba(239, 68, 68, 0.12);
+            border: none;
+            color: #ef4444;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .fav-item .fav-remove:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: scale(1.1);
+        }
+
+        body.light-theme .fav-item {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .fav-item:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .fav-item .fav-info .fav-title {
+            color: #1a1a2e;
+        }
+
+        body.light-theme .fav-item .fav-info .fav-desc {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        body.light-theme .empty-favorites {
+            color: rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .btn-favorites-toggle {
+            background: rgba(234, 179, 8, 0.08);
+            color: #b45309;
+        }
+
+        body.light-theme .btn-favorites-toggle:hover {
+            background: rgba(234, 179, 8, 0.15);
+        }
+
+        body.color-theme .btn-favorites-toggle {
+            background: rgba(234, 179, 8, 0.1);
+            color: #fbbf24;
+            border-color: rgba(234, 179, 8, 0.15);
+        }
+
+        body.color-theme .btn-favorites-toggle:hover {
+            background: rgba(234, 179, 8, 0.2);
+        }
+
+        /* ================================ */
+        /*  EDIT PROFILE & PASSWORD        */
+        /* ================================ */
+        .edit-section {
+            animation: contentFadeIn 0.5s ease 0.55s forwards;
+        }
+
+        .btn-edit {
+            background: rgba(79, 70, 229, 0.2) !important;
+            color: #4f46e5 !important;
+            border: 1px solid rgba(79, 70, 229, 0.3) !important;
+            box-shadow: none !important;
+            height: 45px !important;
+            width: 100% !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: rgba(79, 70, 229, 0.3) !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-password {
+            background: rgba(239, 68, 68, 0.15) !important;
+            color: #ef4444 !important;
+            border: 1px solid rgba(239, 68, 68, 0.2) !important;
+            box-shadow: none !important;
+            height: 45px !important;
+            width: 100% !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-password:hover {
+            background: rgba(239, 68, 68, 0.25) !important;
+            transform: translateY(-2px);
+        }
+
+        .form-wrapper {
+            overflow: hidden;
+            max-height: 0 !important;
+            transition: max-height 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .form-wrapper.open {
+            max-height: 600px !important;
+        }
+
+        .form-inner {
+            padding-top: 15px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease 0.15s, transform 0.5s ease 0.15s;
+        }
+
+        .form-wrapper.open .form-inner {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .input-box-edit {
+            margin-bottom: 12px !important;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .form-wrapper.open .input-box-edit {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-wrapper.open .input-box-edit:nth-child(1) {
+            transition-delay: 0.05s;
+        }
+
+        .form-wrapper.open .input-box-edit:nth-child(2) {
+            transition-delay: 0.1s;
+        }
+
+        .form-wrapper.open .input-box-edit:nth-child(3) {
+            transition-delay: 0.15s;
+        }
+
+        .form-wrapper .btn-save,
+        .form-wrapper .btn-cancel {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+        }
+
+        .form-wrapper.open .btn-save,
+        .form-wrapper.open .btn-cancel {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== INPUTS ===== */
+        .edit-input {
+            width: 100%;
+            padding: 12px 20px !important;
+            border-radius: 30px !important;
+            border: 2px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+            color: #fff !important;
+            outline: none !important;
+            font-size: 15px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .edit-input:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2) !important;
+            transform: scale(1.01) !important;
+        }
+
+        .edit-input::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        body.light-theme .edit-input {
+            background: rgba(255, 255, 255, 0.7) !important;
+            color: #1a1a2e !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .edit-input::placeholder {
+            color: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body.light-theme .edit-input:focus {
+            border-color: #4f46e5 !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .edit-textarea {
+            width: 100%;
+            padding: 12px 20px !important;
+            border-radius: 20px !important;
+            border: 2px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+            color: #fff !important;
+            outline: none !important;
+            font-size: 15px !important;
+            font-family: "Roboto", sans-serif !important;
+            resize: vertical !important;
+            transition: all 0.3s ease !important;
+            min-height: 80px !important;
+        }
+
+        .edit-textarea:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2) !important;
+            transform: scale(1.01) !important;
+        }
+
+        .edit-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        body.light-theme .edit-textarea {
+            background: rgba(255, 255, 255, 0.7) !important;
+            color: #1a1a2e !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .edit-textarea::placeholder {
+            color: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body.light-theme .edit-textarea:focus {
+            border-color: #4f46e5 !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* ===== BUTTONS ===== */
+        .wrapper .btn {
+            width: 100%;
+            height: 45px;
+            border: none;
+            border-radius: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+            display: block;
+            opacity: 0;
+            animation: contentFadeIn 0.5s ease 0.65s forwards;
+        }
+
+        .wrapper .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+        }
+
+        .wrapper .btn:active {
+            transform: scale(0.96);
+        }
+
+        .wrapper .btn-logout {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin-top: 12px;
+        }
+
+        .wrapper .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.25);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #fff !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            margin-top: 8px !important;
+            height: 40px !important;
+            box-shadow: none !important;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        body.light-theme .btn-cancel {
+            background: rgba(0, 0, 0, 0.05) !important;
+            color: #1a1a2e !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .btn-cancel:hover {
+            background: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn-save {
+            background: #4f46e5 !important;
+            color: #fff !important;
+            height: 45px !important;
+        }
+
+        .btn-save:hover {
+            background: #4338ca !important;
+        }
+
+        body.color-theme .btn-save {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+        }
+
+        /* ================================ */
+        /*  SETTINGS PANEL                */
+        /* ================================ */
+        .settings-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(16px);
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .settings-panel .theme-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .settings-panel .theme-buttons button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-panel .theme-buttons button:hover {
+            transform: scale(1.15);
+        }
+
+        .settings-panel .divider {
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== DELETE ACCOUNT BUTTON ===== */
+        .wrapper .btn-danger {
+            background: rgba(239, 68, 68, 0.15) !important;
+            color: #ef4444 !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            margin-top: 8px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .wrapper .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25) !important;
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        body.light-theme .wrapper .btn-danger {
+            background: rgba(239, 68, 68, 0.08) !important;
+            color: #b91c1c !important;
+            border-color: rgba(239, 68, 68, 0.15) !important;
+        }
+
+        body.light-theme .wrapper .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.15) !important;
+        }
+
+        /* ================================ */
+        /*  RESPONSIVE                     */
+        /* ================================ */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .wrapper {
+                padding: 24px 18px;
+                margin: 10px auto 8px auto;
+                border-radius: 14px;
+                max-width: 100%;
+            }
+
+            .title-wrapper h1 {
+                font-size: 24px;
+            }
+
+            .title-wrapper {
+                height: 48px;
+            }
+
+            .profile-avatar .avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+
+            .profile-info .email {
+                font-size: 17px;
+            }
+
+            .btn {
+                height: 42px;
+                font-size: 15px;
+            }
+
+            .stats-grid {
+                gap: 6px;
+            }
+
+            .stat-card {
+                padding: 10px 6px;
+            }
+
+            .stat-card .number {
+                font-size: 18px;
+            }
+
+            .settings-panel {
+                padding: 8px 12px;
+                gap: 8px;
+                bottom: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+                border-radius: 20px;
+            }
+
+            .edit-input {
+                font-size: 14px !important;
+                padding: 10px 16px !important;
+            }
+
+            .edit-textarea {
+                font-size: 14px !important;
+                padding: 10px 16px !important;
+                min-height: 60px !important;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+            }
+
+            .stat-card .number {
+                font-size: 16px;
+            }
+
+            .stat-card .stat-label {
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-container">
+        <div class="bg-gradient" id="bgGradient"></div>
+        <div class="bg-image" id="bgImage"></div>
+        <div class="bg-color" id="bgColor"></div>
+    </div>
+
+    <!-- ===== PARTICLES ===== -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ===== SETTINGS PANEL ===== -->
+    <div class="settings-panel">
+        <div class="theme-buttons">
+            <button onclick="setTheme('dark')" id="themeDark" style="border-color: #4f46e5; background: #0f172a;"
+                title="Dark"></button>
+            <button onclick="setTheme('light')" id="themeLight" style="border-color: transparent; background: #f0f2f5;"
+                title="Light"></button>
+            <button onclick="setTheme('color')" id="themeColor"
+                style="border-color: transparent; background: linear-gradient(135deg, #7c3aed, #4f46e5);"
+                title="Color"></button>
+        </div>
+        <div class="divider"></div>
+        <button class="lang-btn" id="langToggle">EN</button>
+    </div>
+
+    <!-- ===== MAIN BLOCK ===== -->
+    <div class="wrapper" id="wrapper">
+        <div class="title-wrapper">
+            <h1 data-i18n="profile">👤 Profile</h1>
+        </div>
+
+        <!-- ===== AVATAR ===== -->
+        <div class="profile-avatar">
+            <div class="avatar" id="avatarLetter" onclick="document.getElementById('avatarInput').click()"
+                style="cursor: pointer;">
+                👤
+                <span class="status-dot" id="statusDot"></span>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+            <button class="btn-avatar-upload" id="uploadAvatarBtn" data-i18n="uploadPhoto">📷 Upload Photo</button>
+        </div>
+
+        <!-- ===== INFO ===== -->
+        <div class="profile-info">
+            <div class="label" data-i18n="email">Email</div>
+            <div class="email" id="profileEmail">user@example.com</div>
+            <div class="member-since" id="memberSince" data-i18n="memberSince">Member since: --</div>
+            <button class="btn btn-resend" id="resendEmailBtn" style="display: none;">
+                📧 Resend confirmation email
+            </button>
+        </div>
+
+        <!-- ===== STATS ===== -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <span class="number" id="statEntries">0</span>
+                <span class="stat-label" data-i18n="entries">Entries</span>
+            </div>
+            <div class="stat-card">
+                <span class="number" id="statFavorites">0</span>
+                <span class="stat-label" data-i18n="favorites">Favorites</span>
+            </div>
+            <div class="stat-card">
+                <span class="number" id="statDays">0</span>
+                <span class="stat-label" data-i18n="days">Days</span>
+            </div>
+        </div>
+
+        <!-- ===== FAVORITES ===== -->
+        <div class="favorites-section">
+            <button class="btn-favorites-toggle" id="toggleFavoritesBtn">
+                ⭐ Favorites (<span id="favCount">0</span>)
+            </button>
+
+            <div class="favorites-wrapper" id="favoritesWrapper">
+                <div class="favorites-inner" id="favoritesInner">
+                    <div id="favoritesList">
+                        <div id="favoritesContainer">
+                            <p class="empty-favorites" data-i18n="noFavorites">📭 No favorites yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== EDIT PROFILE ===== -->
+        <div class="edit-section">
+            <button class="btn btn-edit" id="toggleEditBtn" data-i18n="editProfile">✏️ Edit Profile</button>
+
+            <div class="form-wrapper" id="editFormWrapper">
+                <div class="form-inner" id="editForm">
+                    <div class="input-box-edit">
+                        <input type="text" class="edit-input" id="editFullName" placeholder="Full Name" data-i18n="fullName">
+                    </div>
+                    <div class="input-box-edit">
+                        <input type="text" class="edit-input" id="editUsername" placeholder="Username" data-i18n="username">
+                    </div>
+                    <div class="input-box-edit">
+                        <textarea class="edit-textarea" id="editBio" placeholder="Bio..." data-i18n="bio"></textarea>
+                    </div>
+                    <button class="btn btn-save" id="saveProfileBtn" data-i18n="save">💾 Save</button>
+                    <button class="btn btn-cancel" id="cancelEditBtn" data-i18n="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHANGE PASSWORD ===== -->
+        <div class="edit-section" style="margin-top: 15px;">
+            <button class="btn btn-password" id="togglePasswordBtn" data-i18n="changePassword">🔒 Change Password</button>
+
+            <div class="form-wrapper" id="passwordFormWrapper">
+                <div class="form-inner" id="passwordForm">
+                    <div class="input-box-edit">
+                        <input type="password" class="edit-input" id="currentPassword" placeholder="Current Password" data-i18n="currentPassword">
+                    </div>
+                    <div class="input-box-edit">
+                        <input type="password" class="edit-input" id="newPassword"
+                            placeholder="New Password (min. 6 chars)" data-i18n="newPassword">
+                    </div>
+                    <div class="input-box-edit">
+                        <input type="password" class="edit-input" id="confirmPassword"
+                            placeholder="Confirm New Password" data-i18n="confirmPassword">
+                    </div>
+                    <button class="btn btn-save" id="savePasswordBtn" style="background: #ef4444 !important;"
+                        data-i18n="savePassword">💾 Change Password</button>
+                    <button class="btn btn-cancel" id="cancelPasswordBtn" data-i18n="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LOGOUT ===== -->
+        <button class="btn btn-logout" id="logoutBtn" data-i18n="logout">🚪 Logout</button>
+
+        <!-- ===== DELETE ACCOUNT ===== -->
+        <button class="btn btn-danger" id="deleteAccountBtn" data-i18n="deleteAccount">🗑️ Delete Account</button>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module">
+        // ====================================================================
+        //  LOAD SAVED LANGUAGE FROM PROFILE
+        // ====================================================================
+        const savedLang = localStorage.getItem('appLang') || 'en';
+        localStorage.setItem('lang', savedLang);
+
+        // ====================================================================
+        //  CUSTOM TOASTS
+        // ====================================================================
+        function showToast(message, type = 'info', duration = 3000) {
+            const oldToasts = document.querySelectorAll('.custom-toast');
+            oldToasts.forEach(toast => toast.remove());
+
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        function showSuccess(message) { showToast(message, 'success'); }
+        function showError(message) { showToast(message, 'error'); }
+        function showWarning(message) { showToast(message, 'warning'); }
+        function showInfo(message) { showToast(message, 'info'); }
+
+        // ====================================================================
+        //  SUPABASE CONNECTION
+        // ====================================================================
+        const SUPABASE_URL = 'https://oninodnelfzadiwchxxz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uaW5vZG5lbGZ6YWRpd2NoeHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NjU3MDUsImV4cCI6MjA5ODE0MTcwNX0.hWauqzJrKRzXRhlMJpvli3tS5_Mhm7n0O-EQtw8kwhI';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ====================================================================
+        //  BACKGROUND
+        // ====================================================================
+        const bgImage = document.getElementById('bgImage');
+        const bgColor = document.getElementById('bgColor');
+        const bgGradient = document.getElementById('bgGradient');
+
+        function restoreBackground() {
+            const savedBg = localStorage.getItem('customBgColor');
+            const bgHidden = localStorage.getItem('bgImageHidden');
+
+            if (savedBg && bgHidden === 'true') {
+                bgImage.classList.add('hide');
+                bgColor.style.background = savedBg;
+                bgColor.classList.add('show');
+                bgGradient.classList.remove('show');
+            } else {
+                bgImage.classList.remove('hide');
+                bgColor.classList.remove('show');
+                if (document.body.classList.contains('color-theme')) {
+                    bgGradient.classList.add('show');
+                } else {
+                    bgGradient.classList.remove('show');
+                }
+            }
+        }
+
+        function applyGlassStyles() {
+            const wrapper = document.querySelector('.wrapper');
+            const savedGlass = localStorage.getItem('customGlassColor');
+            const savedOpacity = localStorage.getItem('customGlassOpacity');
+
+            if (savedGlass && savedOpacity) {
+                const color = savedGlass;
+                const opacity = parseFloat(savedOpacity);
+                const r = parseInt(color.slice(1, 3), 16);
+                const g = parseInt(color.slice(3, 5), 16);
+                const b = parseInt(color.slice(5, 7), 16);
+                wrapper.style.background = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+                wrapper.style.backdropFilter = 'blur(16px)';
+            }
+        }
+
+        // ====================================================================
+        //  THEMES
+        // ====================================================================
+        window.setTheme = function (theme) {
+            const body = document.body;
+
+            body.classList.remove('dark-theme', 'light-theme', 'color-theme');
+
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+                document.getElementById('themeDark').style.borderColor = '#4f46e5';
+                document.getElementById('themeLight').style.borderColor = 'transparent';
+                document.getElementById('themeColor').style.borderColor = 'transparent';
+
+                bgGradient.classList.remove('show');
+                bgImage.style.background = "url('123.jpg')";
+                bgImage.style.backgroundSize = 'cover';
+                bgImage.style.backgroundPosition = 'center';
+                bgImage.style.backgroundRepeat = 'no-repeat';
+                bgImage.classList.remove('hide');
+                bgColor.classList.remove('show');
+
+            } else if (theme === 'light') {
+                body.classList.add('light-theme');
+                document.getElementById('themeDark').style.borderColor = 'transparent';
+                document.getElementById('themeLight').style.borderColor = '#4f46e5';
+                document.getElementById('themeColor').style.borderColor = 'transparent';
+
+                bgGradient.classList.remove('show');
+                bgImage.style.background = "url('123.jpg')";
+                bgImage.style.backgroundSize = 'cover';
+                bgImage.style.backgroundPosition = 'center';
+                bgImage.style.backgroundRepeat = 'no-repeat';
+                bgImage.classList.remove('hide');
+                bgColor.classList.remove('show');
+
+            } else if (theme === 'color') {
+                body.classList.add('color-theme');
+                document.getElementById('themeDark').style.borderColor = 'transparent';
+                document.getElementById('themeLight').style.borderColor = 'transparent';
+                document.getElementById('themeColor').style.borderColor = '#4f46e5';
+
+                bgGradient.classList.add('show');
+                setTimeout(() => {
+                    bgImage.classList.add('hide');
+                }, 50);
+                bgColor.classList.remove('show');
+            }
+
+            localStorage.setItem('appTheme', theme);
+            applyGlassStyles();
+        };
+
+        (function () {
+            const savedTheme = localStorage.getItem('appTheme') || 'dark';
+            window.setTheme(savedTheme);
+        })();
+
+        // ====================================================================
+        //  CHECK USER
+        // ====================================================================
+        const profileEmail = document.getElementById('profileEmail');
+        const avatarLetter = document.getElementById('avatarLetter');
+        const memberSince = document.getElementById('memberSince');
+        const statusDot = document.getElementById('statusDot');
+        const resendEmailBtn = document.getElementById('resendEmailBtn');
+
+        async function checkUser() {
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+
+                if (error || !user) {
+                    window.location.href = 'index-global.html';
+                    return;
+                }
+
+                profileEmail.textContent = user.email;
+
+                if (user.email) {
+                    avatarLetter.innerHTML = `
+                        ${user.email.charAt(0).toUpperCase()}
+                        <span class="status-dot" id="statusDot"></span>
+                    `;
+                }
+
+                // ===== Check email confirmation status =====
+                if (user.email_confirmed_at) {
+                    statusDot.className = 'status-dot';
+                    statusDot.title = 'Email confirmed ✅';
+                    resendEmailBtn.style.display = 'none';
+                } else {
+                    statusDot.className = 'status-dot pending';
+                    statusDot.title = 'Email not confirmed ⚠️';
+                    resendEmailBtn.style.display = 'block';
+                    showWarning('⚠️ Email not confirmed! Check your inbox.');
+                }
+
+                // ===== Member since =====
+                if (user.created_at) {
+                    const date = new Date(user.created_at);
+                    memberSince.textContent = `Member since: ${date.toLocaleDateString('en-US', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    })}`;
+                }
+
+                // ===== Load stats & profile data =====
+                await loadStats(user.id);
+                await loadProfileData();
+                loadSavedAvatar();
+                loadAvatarFromDB();
+
+                console.log('👤 User:', user.email);
+
+            } catch (error) {
+                console.log('User check error:', error.message);
+                window.location.href = 'index-global.html';
+            }
+        }
+
+        // ====================================================================
+        //  RESEND CONFIRMATION EMAIL
+        // ====================================================================
+        resendEmailBtn.addEventListener('click', async function () {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                showError('User not found!');
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = '⏳ Sending...';
+
+            try {
+                const { error } = await supabase.auth.resend({
+                    type: 'signup',
+                    email: user.email,
+                    options: {
+                        emailRedirectTo: window.location.origin + '/profile-global.html'
+                    }
+                });
+
+                if (error) throw error;
+
+                showSuccess('📧 Confirmation email sent! Check your inbox.');
+                this.textContent = '✅ Sent!';
+
+                setTimeout(() => {
+                    this.disabled = false;
+                    this.textContent = '📧 Resend confirmation email';
+                }, 5000);
+
+            } catch (error) {
+                showError('Error: ' + error.message);
+                this.disabled = false;
+                this.textContent = '📧 Resend confirmation email';
+            }
+        });
+
+        // ====================================================================
+        //  STATS
+        // ====================================================================
+        async function loadStats(userId) {
+            try {
+                const { count: entriesCount, error: entriesError } = await supabase
+                    .from('entries')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', userId);
+
+                if (!entriesError) {
+                    document.getElementById('statEntries').textContent = entriesCount || 0;
+                }
+
+                const { count: favoritesCount, error: favError } = await supabase
+                    .from('favorites')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', userId);
+
+                if (!favError) {
+                    document.getElementById('statFavorites').textContent = favoritesCount || 0;
+                }
+
+                const { data: userData } = await supabase.auth.getUser();
+                if (userData?.user?.created_at) {
+                    const created = new Date(userData.user.created_at);
+                    const now = new Date();
+                    const days = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+                    document.getElementById('statDays').textContent = days || 0;
+                }
+
+            } catch (error) {
+                console.log('Stats unavailable');
+            }
+        }
+
+        // ====================================================================
+        //  EDIT PROFILE
+        // ====================================================================
+        const toggleEditBtn = document.getElementById('toggleEditBtn');
+        const editFormWrapper = document.getElementById('editFormWrapper');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const editFullName = document.getElementById('editFullName');
+        const editUsername = document.getElementById('editUsername');
+        const editBio = document.getElementById('editBio');
+
+        function toggleEditForm(open) {
+            if (open) {
+                editFormWrapper.classList.add('open');
+                toggleEditBtn.textContent = '✖️ Close';
+                loadProfileData();
+            } else {
+                editFormWrapper.classList.remove('open');
+                toggleEditBtn.textContent = '✏️ Edit Profile';
+            }
+        }
+
+        toggleEditBtn.addEventListener('click', function () {
+            const isOpen = editFormWrapper.classList.contains('open');
+            toggleEditForm(!isOpen);
+        });
+
+        cancelEditBtn.addEventListener('click', function () {
+            toggleEditForm(false);
+        });
+
+        async function loadProfileData() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('full_name, username, bio')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error) {
+                    console.log('Profile load error:', error.message);
+                    return;
+                }
+
+                if (data) {
+                    editFullName.value = data.full_name || '';
+                    editUsername.value = data.username || '';
+                    editBio.value = data.bio || '';
+
+                    if (data.full_name) {
+                        document.querySelector('.profile-info .email').textContent = data.full_name;
+                    }
+                }
+            } catch (error) {
+                console.log('Error:', error.message);
+            }
+        }
+
+        saveProfileBtn.addEventListener('click', async function () {
+            const fullName = editFullName.value.trim();
+            const username = editUsername.value.trim();
+            const bio = editBio.value.trim();
+
+            if (!fullName && !username) {
+                showWarning('Fill at least one field!');
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = '⏳ Saving...';
+
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    showError('User not found!');
+                    return;
+                }
+
+                const { error } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: user.id,
+                        full_name: fullName || null,
+                        username: username || null,
+                        bio: bio || null,
+                        updated_at: new Date().toISOString()
+                    });
+
+                if (error) {
+                    showError('Error: ' + error.message);
+                    return;
+                }
+
+                showSuccess('✅ Profile updated!');
+                toggleEditForm(false);
+
+                if (fullName) {
+                    document.querySelector('.profile-info .email').textContent = fullName;
+                }
+
+            } catch (error) {
+                showError('Error: ' + error.message);
+            } finally {
+                this.disabled = false;
+                this.textContent = '💾 Save';
+            }
+        });
+
+        // ====================================================================
+        //  CHANGE PASSWORD
+        // ====================================================================
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+        const passwordFormWrapper = document.getElementById('passwordFormWrapper');
+        const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+        const savePasswordBtn = document.getElementById('savePasswordBtn');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+
+        function togglePasswordForm(open) {
+            if (open) {
+                passwordFormWrapper.classList.add('open');
+                togglePasswordBtn.textContent = '✖️ Close';
+                currentPassword.value = '';
+                newPassword.value = '';
+                confirmPassword.value = '';
+            } else {
+                passwordFormWrapper.classList.remove('open');
+                togglePasswordBtn.textContent = '🔒 Change Password';
+            }
+        }
+
+        togglePasswordBtn.addEventListener('click', function () {
+            const isOpen = passwordFormWrapper.classList.contains('open');
+            togglePasswordForm(!isOpen);
+        });
+
+        cancelPasswordBtn.addEventListener('click', function () {
+            togglePasswordForm(false);
+        });
+
+        savePasswordBtn.addEventListener('click', async function () {
+            const current = currentPassword.value.trim();
+            const newPass = newPassword.value.trim();
+            const confirm = confirmPassword.value.trim();
+
+            if (!current || !newPass || !confirm) {
+                showWarning('Fill in all fields!');
+                return;
+            }
+
+            if (newPass.length < 6) {
+                showWarning('Password must be at least 6 characters!');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                showWarning('Passwords do not match!');
+                return;
+            }
+
+            if (current === newPass) {
+                showWarning('New password must be different!');
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = '⏳ Checking...';
+
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    showError('User not found!');
+                    return;
+                }
+
+                const { error: signInError } = await supabase.auth.signInWithPassword({
+                    email: user.email,
+                    password: current
+                });
+
+                if (signInError) {
+                    showError('❌ Incorrect current password!');
+                    return;
+                }
+
+                this.textContent = '⏳ Updating...';
+                const { error: updateError } = await supabase.auth.updateUser({
+                    password: newPass
+                });
+
+                if (updateError) {
+                    showError('❌ Password change error: ' + updateError.message);
+                    return;
+                }
+
+                showSuccess('✅ Password changed successfully!');
+                togglePasswordForm(false);
+
+                setTimeout(() => {
+                    showInfo('🔄 Redirecting to login...');
+                    setTimeout(async () => {
+                        await supabase.auth.signOut();
+                        window.location.href = 'index-global.html';
+                    }, 1000);
+                }, 2000);
+
+            } catch (error) {
+                showError('Error: ' + error.message);
+                console.error(error);
+            } finally {
+                this.disabled = false;
+                this.textContent = '💾 Change Password';
+            }
+        });
+
+        // ====================================================================
+        //  FAVORITES
+        // ====================================================================
+        const toggleFavoritesBtn = document.getElementById('toggleFavoritesBtn');
+        const favoritesWrapper = document.getElementById('favoritesWrapper');
+        const favoritesContainer = document.getElementById('favoritesContainer');
+        const favCount = document.getElementById('favCount');
+
+        function toggleFavorites(open) {
+            if (open) {
+                favoritesWrapper.classList.add('open');
+                toggleFavoritesBtn.classList.add('active');
+                toggleFavoritesBtn.innerHTML = '✖️ Close';
+                loadFavorites();
+            } else {
+                favoritesWrapper.classList.remove('open');
+                toggleFavoritesBtn.classList.remove('active');
+                toggleFavoritesBtn.innerHTML = `⭐ Favorites (<span id="favCount">0</span>)`;
+            }
+        }
+
+        toggleFavoritesBtn.addEventListener('click', function () {
+            const isOpen = favoritesWrapper.classList.contains('open');
+            toggleFavorites(!isOpen);
+        });
+
+        async function loadFavorites() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+
+                const { data, error } = await supabase
+                    .from('favorites')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const count = data?.length || 0;
+                document.getElementById('favCount').textContent = count;
+
+                if (count === 0) {
+                    favoritesContainer.innerHTML = `
+                        <p class="empty-favorites" data-i18n="noFavorites">📭 No favorites yet</p>
+                    `;
+                    return;
+                }
+
+                favoritesContainer.innerHTML = data.map(item => `
+                    <div class="fav-item" data-id="${item.id}">
+                        <div class="fav-info">
+                            <div class="fav-title">${item.item_title || 'Untitled'}</div>
+                            ${item.item_description ? `<div class="fav-desc">${item.item_description}</div>` : ''}
+                        </div>
+                        <button class="fav-remove" onclick="removeFavorite('${item.id}')">✕</button>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Favorites load error:', error);
+                favoritesContainer.innerHTML = `<p class="empty-favorites">❌ Error loading favorites</p>`;
+            }
+        }
+
+        window.removeFavorite = async function (id) {
+            try {
+                const { error } = await supabase
+                    .from('favorites')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showSuccess('🗑️ Removed from favorites');
+                loadFavorites();
+
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data } = await supabase
+                        .from('favorites')
+                        .select('id', { count: 'exact' })
+                        .eq('user_id', user.id);
+                    document.getElementById('favCount').textContent = data?.length || 0;
+                }
+
+            } catch (error) {
+                console.error('Remove error:', error);
+                showError('Error removing favorite');
+            }
+        };
+
+        window.addFavorite = async function (itemId, title, description, image) {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    showError('⚠️ Please login first!');
+                    return;
+                }
+
+                const { data: existing } = await supabase
+                    .from('favorites')
+                    .select('id')
+                    .eq('user_id', user.id)
+                    .eq('item_id', itemId)
+                    .single();
+
+                if (existing) {
+                    showWarning('⚠️ Already in favorites!');
+                    return;
+                }
+
+                const { error } = await supabase
+                    .from('favorites')
+                    .insert({
+                        user_id: user.id,
+                        item_id: String(itemId),
+                        item_title: title || 'Untitled',
+                        item_description: description || '',
+                        item_image: image || ''
+                    });
+
+                if (error) throw error;
+
+                showSuccess('⭐ Added to favorites!');
+
+                const { data } = await supabase
+                    .from('favorites')
+                    .select('id', { count: 'exact' })
+                    .eq('user_id', user.id);
+                document.getElementById('favCount').textContent = data?.length || 0;
+
+            } catch (error) {
+                console.error('Add error:', error);
+                showError('❌ Error adding favorite');
+            }
+        };
+
+        // ====================================================================
+        //  AVATAR UPLOAD
+        // ====================================================================
+        function updateAvatarDisplay(url) {
+            const avatar = document.getElementById('avatarLetter');
+            if (url) {
+                const fullUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+
+                avatar.innerHTML = `
+                    <img src="${fullUrl}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; image-rendering: auto;">
+                    <span class="status-dot" id="statusDot"></span>
+                `;
+                localStorage.setItem('userAvatar', url);
+            }
+        }
+
+        function loadSavedAvatar() {
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (savedAvatar) {
+                updateAvatarDisplay(savedAvatar);
+            }
+        }
+
+        async function loadAvatarFromDB() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('avatar_url')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error) {
+                    console.log('No avatar in DB');
+                    return;
+                }
+
+                if (data?.avatar_url) {
+                    updateAvatarDisplay(data.avatar_url);
+                    localStorage.setItem('userAvatar', data.avatar_url);
+                }
+            } catch (error) {
+                console.log('Avatar load error:', error.message);
+            }
+        }
+
+        const avatarInput = document.getElementById('avatarInput');
+        const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
+        const avatarElement = document.getElementById('avatarLetter');
+
+        uploadAvatarBtn.addEventListener('click', () => avatarInput.click());
+        avatarElement.addEventListener('click', () => avatarInput.click());
+
+        avatarInput.addEventListener('change', async function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 2 * 1024 * 1024) {
+                showError('File too large! Max 2MB.');
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                showError('Please select an image!');
+                return;
+            }
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                showError('User not found!');
+                return;
+            }
+
+            uploadAvatarBtn.textContent = '⏳ Uploading...';
+            uploadAvatarBtn.disabled = true;
+
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('avatars')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: true,
+                        contentType: file.type
+                    });
+
+                if (uploadError) {
+                    console.error('Upload error:', uploadError);
+                    throw new Error(uploadError.message);
+                }
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('avatars')
+                    .getPublicUrl(fileName);
+
+                console.log('📷 Uploaded:', publicUrl);
+
+                const { error: updateError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: user.id,
+                        avatar_url: publicUrl,
+                        updated_at: new Date().toISOString()
+                    });
+
+                if (updateError) throw updateError;
+
+                updateAvatarDisplay(publicUrl);
+                showSuccess('✅ Avatar uploaded successfully!');
+
+            } catch (error) {
+                showError('Upload error: ' + error.message);
+                console.error('❌ Full error:', error);
+            } finally {
+                uploadAvatarBtn.textContent = '📷 Upload Photo';
+                uploadAvatarBtn.disabled = false;
+                avatarInput.value = '';
+            }
+        });
+
+        // ====================================================================
+        //  DELETE ACCOUNT
+        // ====================================================================
+        window.deleteAccount = async function () {
+            if (!confirm('⚠️ Are you sure you want to delete your account? This action is IRREVERSIBLE!')) {
+                return;
+            }
+
+            if (!confirm('⚠️ REALLY? All your data will be lost forever!')) {
+                return;
+            }
+
+            const btn = document.getElementById('deleteAccountBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Deleting...';
+
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    showError('User not found!');
+                    btn.disabled = false;
+                    btn.textContent = '🗑️ Delete Account';
+                    return;
+                }
+
+                // 1. Удаляем данные из таблиц
+                try {
+                    await supabase.from('profiles').delete().eq('id', user.id);
+                    await supabase.from('entries').delete().eq('user_id', user.id);
+                    await supabase.from('favorites').delete().eq('user_id', user.id);
+                } catch (e) {
+                    console.log('Some tables may not exist:', e.message);
+                }
+
+                // 2. Удаляем аватарку из Storage (если есть)
+                try {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('avatar_url')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (profile?.avatar_url) {
+                        const fileName = profile.avatar_url.split('/').pop();
+                        await supabase.storage.from('avatars').remove([fileName]);
+                    }
+                } catch (e) {
+                    console.log('Avatar deletion error:', e.message);
+                }
+
+                // 3. Выходим из аккаунта
+                await supabase.auth.signOut();
+
+                // 4. Очищаем localStorage
+                localStorage.removeItem('userAvatar');
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('savedEmail');
+
+                showSuccess('✅ Account deleted successfully!');
+                setTimeout(() => {
+                    window.location.href = 'index-global.html';
+                }, 1500);
+
+            } catch (error) {
+                showError('Error: ' + error.message);
+                console.error(error);
+                btn.disabled = false;
+                btn.textContent = '🗑️ Delete Account';
+            }
+        };
+
+        // ====================================================================
+        //  LOGOUT
+        // ====================================================================
+        async function logout() {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                showError('Logout error: ' + error.message);
+            } else {
+                showSuccess('Logged out!');
+                setTimeout(() => {
+                    window.location.href = 'index-global.html';
+                }, 1000);
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            logout();
+        });
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.deleteAccount();
+        });
+
+        // ====================================================================
+        //  LANGUAGES — ПЕРЕКЛЮЧЕНИЕ (ПО КРУГУ)
+        // ====================================================================
+
+        // Все языки из lang.js (будут загружены из внешнего файла)
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        // Функция переключения языка (по кругу)
+        window.toggleLang = function () {
+            // Получаем все языки из глобальной переменной translations (из lang.js)
+            if (typeof translations !== 'undefined') {
+                const langCodes = Object.keys(translations);
+                const currentIndex = langCodes.indexOf(currentLang);
+                const nextIndex = (currentIndex + 1) % langCodes.length;
+                currentLang = langCodes[nextIndex];
+                localStorage.setItem('lang', currentLang);
+                updateLanguage();
+            } else {
+                // Если translations ещё не загружена — просто переключаем между en и ru
+                currentLang = currentLang === 'en' ? 'ru' : 'en';
+                localStorage.setItem('lang', currentLang);
+                updateLanguageSimple();
+            }
+        };
+
+        // Простое обновление языка (без translations)
+        function updateLanguageSimple() {
+            const langBtn = document.getElementById('langToggle');
+            if (langBtn) {
+                langBtn.textContent = currentLang.toUpperCase();
+            }
+            // Показываем уведомление
+            if (typeof showToast === 'function') {
+                showToast('🌍 Language: ' + currentLang.toUpperCase(), 'info');
+            }
+        }
+
+        // Обновление языка (с translations)
+        function updateLanguage() {
+            if (typeof translations !== 'undefined' && translations[currentLang]) {
+                const t = translations[currentLang];
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (t[key] !== undefined) {
+                        if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
+                            el.placeholder = t[key];
+                        } else {
+                            el.textContent = t[key];
+                        }
+                    }
+                });
+            }
+
+            const langBtn = document.getElementById('langToggle');
+            if (langBtn) {
+                langBtn.textContent = currentLang.toUpperCase();
+            }
+        }
+
+        // ====================================================================
+        //  START
+        // ====================================================================
+        restoreBackground();
+        applyGlassStyles();
+        checkUser();
+
+        // Инициализация языка
+        const savedLangForProfile = localStorage.getItem('lang') || 'en';
+        currentLang = savedLangForProfile;
+
+        // Ждём загрузку lang.js
+        setTimeout(() => {
+            if (typeof translations !== 'undefined') {
+                updateLanguage();
+            } else {
+                updateLanguageSimple();
+            }
+        }, 100);
+
+        // Настройка кнопки языка
+        const langBtn = document.getElementById('langToggle');
+        if (langBtn) {
+            langBtn.textContent = currentLang.toUpperCase();
+            langBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.toggleLang();
+            });
+        }
+        
+        // Force language update from lang.js
+        if (typeof updateLanguage === 'function') {
+            setTimeout(function () {
+                updateLanguage();
+                console.log('🌍 Language updated from lang.js');
+            }, 100);
+        }
+
+        console.log('✅ Profile page loaded!');
+    </script>
+</body>
+
+</html>
